@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+$LOAD_PATH.unshift File.expand_path('../lib', __dir__)
+require 'robot'
+
+Dir["#{__dir__}/../config/*.rb"].reject do |file|
+  require file
+end
+
+# to make command in underscore
+unless ARGV.empty?
+  ARGV[0] = ARGV[0].gsub(/::/, '/')
+                   .gsub(/([A-Z]+)([A-Z][a-z])/, '\1_\2')
+                   .gsub(/([a-z\d])([A-Z])/, '\1_\2')
+                   .tr('-', '_')
+                   .downcase
+end
+Robot::App.start
