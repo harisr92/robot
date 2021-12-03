@@ -26,7 +26,7 @@ module Robot
       private
 
       def storage
-        @storage ||= PStore.new('robot.pstore')
+        @storage ||= PStore.new('.robot.pstore')
       end
     end
   end
