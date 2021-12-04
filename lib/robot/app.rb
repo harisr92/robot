@@ -10,7 +10,7 @@ module Robot
       true
     end
 
-    desc 'Start console', 'start robot console'
+    desc 'console', 'start robot console'
     def console
       Pry.start
     end
