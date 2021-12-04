@@ -3,8 +3,8 @@ name: Robot Unit Tests
 on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: ubuntu-16.04
+  test:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         ruby: ['3.0.3']
