@@ -307,6 +307,12 @@ RSpec.describe Robot::App do
           table = Robot::Table.init
           expect(table.toy.to_s).to eq('')
         end
+
+        it 'should run all commands when large file is passed' do
+          subject.invoke(:execute, [], file: "#{__dir__}/../../templates/large_commands_set.txt")
+          table = Robot::Table.init
+          expect(table.toy.to_s).to eq('5,3,NORTH')
+        end
       end
     end
   end
