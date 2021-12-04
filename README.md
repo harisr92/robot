@@ -24,6 +24,7 @@ A command should be placed in a line
 ./bin/robot execute -f /path/to/file
 ```
 [example file](spec/templates/commands.txt)
+[example file with 100 commands](spec/templates/large_commands_set.txt)
 
 ## Place the robot on table
 ```shell
