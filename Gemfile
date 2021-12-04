@@ -13,6 +13,7 @@ gem 'zeitwerk'
 group :test do
   gem 'rspec'
   gem 'rubocop'
+  gem 'simplecov'
 end
 
 group :test, :development do

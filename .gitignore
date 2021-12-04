@@ -5,3 +5,4 @@ tmp/
 
 .robot.pstore
 robo_commands.txt
+coverage/
