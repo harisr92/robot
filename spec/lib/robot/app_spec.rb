@@ -110,4 +110,188 @@ RSpec.describe Robot::App do
       end
     end
   end
+
+  describe '#right' do
+    let(:table) { Robot::Table.init }
+
+    before do
+      table.place_robot(x_axis: 0, y_axis: 1)
+      table.update
+    end
+
+    context 'when facing north' do
+      it 'should face east' do
+        expect(Robot::Table.report).to eq('0,1,NORTH')
+        subject.invoke(:right)
+        expect(Robot::Table.report).to eq('0,1,EAST')
+      end
+    end
+
+    context 'when facing east' do
+      it 'should face south' do
+        subject.right
+        expect(Robot::Table.report).to eq('0,1,EAST')
+        subject.invoke(:right)
+        expect(Robot::Table.report).to eq('0,1,SOUTH')
+      end
+    end
+
+    context 'when facing south' do
+      it 'should face west' do
+        subject.right
+        subject.right
+        expect(Robot::Table.report).to eq('0,1,SOUTH')
+        subject.invoke(:right)
+        expect(Robot::Table.report).to eq('0,1,WEST')
+      end
+    end
+
+    context 'when facing WEST' do
+      it 'should face north' do
+        subject.right
+        subject.right
+        subject.right
+        expect(Robot::Table.report).to eq('0,1,WEST')
+        subject.invoke(:right)
+        expect(Robot::Table.report).to eq('0,1,NORTH')
+      end
+    end
+  end
+
+  describe '#move' do
+    let(:table) { Robot::Table.init }
+
+    context 'when facing north' do
+      before do
+        table.place_robot(x_axis: 2, y_axis: 2, direction: 'north')
+      end
+
+      it 'should move one unit north' do
+        expect(table.toy.to_s).to eq('2,2,NORTH')
+        table.toy.move
+        expect(table.toy.to_s).to eq('2,3,NORTH')
+      end
+
+      context 'when invalid movement' do
+        before do
+          table.place_robot(x_axis: 0, y_axis: Robot.config.table_height, direction: 'north')
+        end
+
+        it 'should raise invalid error' do
+          expect { table.toy.move }.to raise_error(Robot::Toy::Invalid)
+        end
+      end
+    end
+
+    context 'when facing south' do
+      before do
+        table.place_robot(x_axis: 2, y_axis: 2, direction: 'south')
+      end
+
+      it 'should move one unit south' do
+        expect(table.toy.to_s).to eq('2,2,SOUTH')
+        table.toy.move
+        expect(table.toy.to_s).to eq('2,1,SOUTH')
+      end
+
+      context 'when invalid movement' do
+        before do
+          table.place_robot(x_axis: 0, y_axis: 0, direction: 'south')
+        end
+
+        it 'should raise invalid error' do
+          expect { table.toy.move }.to raise_error(Robot::Toy::Invalid)
+        end
+      end
+    end
+
+    context 'when facing west' do
+      before do
+        table.place_robot(x_axis: 2, y_axis: 2, direction: 'west')
+      end
+
+      it 'should move one unit west' do
+        expect(table.toy.to_s).to eq('2,2,WEST')
+        table.toy.move
+        expect(table.toy.to_s).to eq('1,2,WEST')
+      end
+
+      context 'when invalid movement' do
+        before do
+          table.place_robot(x_axis: 0, y_axis: 0, direction: 'south')
+        end
+
+        it 'should raise invalid error' do
+          expect { table.toy.move }.to raise_error(Robot::Toy::Invalid)
+        end
+      end
+    end
+
+    context 'when facing east' do
+      before do
+        table.place_robot(x_axis: 2, y_axis: 2, direction: 'east')
+      end
+
+      it 'should move one unit west' do
+        expect(table.toy.to_s).to eq('2,2,EAST')
+        table.toy.move
+        expect(table.toy.to_s).to eq('3,2,EAST')
+      end
+
+      context 'when invalid movement' do
+        before do
+          table.place_robot(x_axis: Robot.config.table_width, y_axis: 0, direction: 'east')
+        end
+
+        it 'should raise invalid error' do
+          expect { table.toy.move }.to raise_error(Robot::Toy::Invalid)
+        end
+      end
+    end
+  end
+
+  describe '#execute' do
+    before do
+      allow(Robot::Table).to receive(:report)
+    end
+
+    context 'when conf is passed' do
+      context 'when valid commands are passed' do
+        it 'should execute every command' do
+          expect(Robot::Table).to receive(:report)
+          subject.invoke(:execute, [], conf: "PLACE 0,0,NORTH\n RIGHT\n REPORT\n MOVE\n LEFT\n LEFT")
+          table = Robot::Table.init
+          expect(table.toy.to_s).to eq('1,0,WEST')
+        end
+      end
+
+      context 'when commands are not valid' do
+        it 'should skip rest commands when robot is not place' do
+          subject.invoke(:execute, [], conf: "RIGHT\n REPORT\n MOVE\n LEFT\n LEFT")
+          table = Robot::Table.init
+          expect(table.toy.to_s).to eq('')
+        end
+
+        it 'should skip when two commands are on same line' do
+          subject.invoke(:execute, [], conf: "PLACE 0,0,NORTH\n RIGHT\n REPORT\n MOVE LEFT\n LEFT")
+          table = Robot::Table.init
+          expect(table.toy.to_s).to eq('1,0,NORTH')
+        end
+
+        it 'should skip when command is invalid' do
+          subject.invoke(:execute, [], conf: "PLACE 0,0,NORTH\n RIGHT\n REPORT\n MOVE\n LEFT\n LET")
+          table = Robot::Table.init
+          expect(table.toy.to_s).to eq('1,0,NORTH')
+        end
+      end
+    end
+
+    context 'when file is passed' do
+      it 'should read commands from file' do
+        subject.invoke(:execute, [], file: "#{__dir__}/../../templates/commands.txt")
+        table = Robot::Table.init
+        expect(table.toy.to_s).to eq('0,1,WEST')
+      end
+    end
+  end
 end
