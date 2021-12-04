@@ -18,6 +18,7 @@ RSpec.describe Robot::Storage do
       before do
         described_class.store(table)
         table.place_robot(x_axis: 0, y_axis: 0, direction: 'north')
+        table.update
       end
 
       it 'should fetch the table' do
@@ -36,6 +37,7 @@ RSpec.describe Robot::Storage do
     before do
       described_class.store(table)
       table.place_robot(x_axis: 0, y_axis: 0, direction: 'north')
+      table.update
     end
 
     it 'should remove table data from storage and recreate the table' do

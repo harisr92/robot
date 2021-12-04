@@ -63,4 +63,51 @@ RSpec.describe Robot::App do
       subject.invoke(:report)
     end
   end
+
+  describe '#left' do
+    let(:table) { Robot::Table.init }
+
+    before do
+      table.place_robot(x_axis: 0, y_axis: 1)
+      table.update
+    end
+
+    context 'when facing north' do
+      it 'should face west' do
+        expect(Robot::Table.report).to eq('0,1,NORTH')
+        subject.invoke(:left)
+        expect(Robot::Table.report).to eq('0,1,WEST')
+      end
+    end
+
+    context 'when facing west' do
+      it 'should face south' do
+        subject.left
+        expect(Robot::Table.report).to eq('0,1,WEST')
+        subject.invoke(:left)
+        expect(Robot::Table.report).to eq('0,1,SOUTH')
+      end
+    end
+
+    context 'when facing south' do
+      it 'should face east' do
+        subject.left
+        subject.left
+        expect(Robot::Table.report).to eq('0,1,SOUTH')
+        subject.invoke(:left)
+        expect(Robot::Table.report).to eq('0,1,EAST')
+      end
+    end
+
+    context 'when facing east' do
+      it 'should face north' do
+        subject.left
+        subject.left
+        subject.left
+        expect(Robot::Table.report).to eq('0,1,EAST')
+        subject.invoke(:left)
+        expect(Robot::Table.report).to eq('0,1,NORTH')
+      end
+    end
+  end
 end

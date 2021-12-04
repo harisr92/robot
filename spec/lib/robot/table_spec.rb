@@ -13,6 +13,7 @@ RSpec.describe Robot::Table do
     context 'when storage have data' do
       before do
         subject.place_robot(x_axis: 0, y_axis: 0, direction: 'north')
+        subject.update
       end
 
       it 'should give the latest data' do
@@ -34,6 +35,7 @@ RSpec.describe Robot::Table do
     context 'when robot is placed on the table' do
       before do
         subject.place_robot(x_axis: 0, y_axis: 0, direction: 'north')
+        subject.update
       end
 
       it 'should report position of robot' do
@@ -75,13 +77,8 @@ RSpec.describe Robot::Table do
   describe '#place_robot' do
     let(:table) { Robot::Table.init }
 
-    before do
-      allow(Robot::Storage).to receive(:store)
-    end
-
     context 'when arguments are x_axis, y_axis and direction' do
       it 'should create a toy' do
-        expect(Robot::Storage).to receive(:store).with(table)
         toy = table.place_robot(x_axis: 0, y_axis: 0, direction: 'north')
         expect(toy.table).to eq(table)
         expect(toy.x_axis).to eq(0)
@@ -95,6 +92,18 @@ RSpec.describe Robot::Table do
         expect { table.place_robot(x_axis: -20, y_axis: -20) }.to raise_error(Robot::Toy::Invalid)
         expect { table.place_robot(direction: 'test') }.to raise_error(Robot::Toy::Invalid)
       end
+    end
+  end
+
+  describe '#update' do
+    before do
+      subject.place_robot(x_axis: 0, y_axis: 0, direction: 'north')
+    end
+
+    it 'should store state of the table' do
+      expect(Robot::Table.report).to eq('')
+      subject.update
+      expect(Robot::Table.report).to eq('0,0,NORTH')
     end
   end
 end

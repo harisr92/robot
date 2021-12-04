@@ -17,13 +17,21 @@ module Robot
     desc 'Place the robot at X,Y and direction', 'Place the robot on table at position X, Y and direction'
     def place(args)
       x_axis, y_axis, direction = sanitize_positions(args)
-      table = Table.init
       table.place_robot(x_axis: x_axis, y_axis: y_axis, direction: direction)
+      table.update
     rescue Toy::Invalid => e
       unless ENV['APP_ENV'] == 'test'
         shell.say e.message
         exit(1)
       end
+    end
+
+    desc 'Turn robot to left', 'Turn robot 90 degrees to the left'
+    def left
+      return unless table.toy
+
+      table.toy.left
+      table.update
     end
 
     desc 'Get position of robot', 'Get position of the robot on the table'
@@ -37,6 +45,10 @@ module Robot
     end
 
     private
+
+    def table
+      @table ||= Table.init
+    end
 
     def sanitize_positions(args)
       x_axis, y_axis, direction = args.split(',')

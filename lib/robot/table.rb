@@ -3,7 +3,8 @@
 module Robot
   # table for toy robot to move
   class Table
-    attr_reader :toy, :width, :height
+    attr_reader :width, :height
+    attr_accessor :toy
 
     class << self
       def init
@@ -29,9 +30,11 @@ module Robot
     end
 
     def place_robot(**args)
-      @toy = Toy.new(**args, table: self)
+      self.toy = Toy.new(**args, table: self)
+    end
+
+    def update
       Storage.store(self)
-      @toy
     end
   end
 end
