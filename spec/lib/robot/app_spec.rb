@@ -9,6 +9,12 @@ RSpec.describe Robot::App do
     expect(described_class.namespace).to eq('robot')
   end
 
+  describe '.exit_on_failure?' do
+    it 'should be true' do
+      expect(described_class.exit_on_failure?).to be_truthy
+    end
+  end
+
   describe '#console' do
     before do
       allow(Pry).to receive(:start)
@@ -174,11 +180,13 @@ RSpec.describe Robot::App do
 
       context 'when invalid movement' do
         before do
-          table.place_robot(x_axis: 0, y_axis: Robot.config.table_height, direction: 'north')
+          subject.place("0,#{Robot.config.table_height},NORTH")
         end
 
         it 'should raise invalid error' do
-          expect { table.toy.move }.to raise_error(Robot::Toy::Invalid)
+          expect(Robot::Table.report).to eq("0,#{Robot.config.table_height},NORTH")
+          subject.move
+          expect(Robot::Table.report).to eq("0,#{Robot.config.table_height},NORTH")
         end
       end
     end
@@ -300,6 +308,15 @@ RSpec.describe Robot::App do
           expect(table.toy.to_s).to eq('')
         end
       end
+    end
+  end
+
+  describe '#reset' do
+    it 'should reset table' do
+      subject.place('0,0,NORTH')
+      expect(Robot::Table.report).to eq('0,0,NORTH')
+      subject.reset
+      expect(Robot::Table.report).to eq('')
     end
   end
 end
