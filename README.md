@@ -47,7 +47,7 @@ A command should be placed in a line
 
 ## Get position of robot
 ```shell
-./bin/robot position
+./bin/robot report
 
 Output: 0,0,NORTH
 ```
