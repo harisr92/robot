@@ -25,7 +25,7 @@ A command should be placed in a line
 ```
 [example file](spec/templates/commands.txt)
 
-## Place the robote on table
+## Place the robot on table
 ```shell
 ./bin/robot PLACE 0,0,NORTH
 ```
