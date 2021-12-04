@@ -1,5 +1,6 @@
 # Robot
 ![test](https://github.com/harisr92/robot/actions/workflows/spec.yml/badge.svg)
+
 A robot which is moving on top of a table
 
 ## Execute commands from command line
