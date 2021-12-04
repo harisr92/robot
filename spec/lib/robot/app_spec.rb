@@ -292,6 +292,14 @@ RSpec.describe Robot::App do
         table = Robot::Table.init
         expect(table.toy.to_s).to eq('0,1,WEST')
       end
+
+      context 'when path is not valid' do
+        it 'should not do anything' do
+          subject.invoke(:execute, [], file: './commands.txt')
+          table = Robot::Table.init
+          expect(table.toy.to_s).to eq('')
+        end
+      end
     end
   end
 end
