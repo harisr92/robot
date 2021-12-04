@@ -4,6 +4,7 @@ module Robot
   # Starting point for robot app
   class App < Thor
     namespace :robot
+    map '-R' => :report
 
     def self.exit_on_failure?
       true
@@ -14,7 +15,7 @@ module Robot
       Pry.start
     end
 
-    desc 'execute file, -', 'Robot can execute a series of commands. Single command per line'
+    desc 'execute | EXECUTE', 'Robot can execute a series of commands. Single command per line'
     method_option :file, aliases: '-f',
                          desc: 'Robot commands are fetched from the supplied file, each command in each line'
     method_option :conf, aliases: '-c', desc: 'Robot commands from command line per line'
@@ -27,7 +28,7 @@ module Robot
       end
     end
 
-    desc 'Place the robot at X,Y and direction', 'Place the robot on table at position X, Y and direction'
+    desc 'place [X,Y,FACE]', 'Place the robot on table at position X, Y and direction'
     def place(args)
       x_axis, y_axis, direction = sanitize_positions(args)
       table.place_robot(x_axis: x_axis, y_axis: y_axis, direction: direction)
@@ -36,7 +37,7 @@ module Robot
       nil
     end
 
-    desc 'Turn robot to left', 'Turn robot 90 degrees to the left'
+    desc 'left', 'Turn robot 90 degrees to the left'
     def left
       return unless table.toy
 
@@ -44,7 +45,7 @@ module Robot
       table.update
     end
 
-    desc 'Turn robot to right', 'Turn robot 90 degrees to the right'
+    desc 'right', 'Turn robot 90 degrees to the right'
     def right
       return unless table.toy
 
@@ -52,7 +53,7 @@ module Robot
       table.update
     end
 
-    desc 'Move robot', 'Move robot one unit to the direction'
+    desc 'move', 'Move robot one unit to the direction'
     def move
       return unless table.toy
 
@@ -62,12 +63,12 @@ module Robot
       nil
     end
 
-    desc 'Get position of robot', 'Get position of the robot on the table'
+    desc 'report', 'Get position of the robot on the table'
     def report
       shell.say Table.report
     end
 
-    desc 'Reset table and remove robot', 'Removes robot from the table and gives a clean table'
+    desc 'reset', 'Removes robot from the table and gives a clean table'
     def reset
       Storage.reset
     end
