@@ -3,3 +3,4 @@ AllCops:
   NewCops: enable
   Exclude:
     - './spec/**/*'
+    - 'vendor/**/*'
