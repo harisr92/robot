@@ -85,8 +85,10 @@ module Robot
     end
 
     def sanitize_command(command)
-      cmd, args = command.to_s.split.map { |element| element.strip.downcase }.reject(&:empty?)
-      return ['', nil] unless cmd
+      cmd_array = command.to_s.split
+      cmd = cmd_array.first.to_s.strip.downcase
+      args = cmd_array[1..].to_a.map { |element| element.strip.downcase }.join
+      return ['', nil] if cmd.empty?
 
       [cmd.downcase, args]
     end
