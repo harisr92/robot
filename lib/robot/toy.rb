@@ -17,11 +17,10 @@ module Robot
     attr_accessor :x_axis, :y_axis
 
     def initialize(x_axis: 0, y_axis: 0, direction: 'north', table: nil)
-      handle_invalid_direction(direction)
-
       @direction = direction
       @table = table
-      validate_and_set(x_axis, y_axis)
+      @x_axis = x_axis
+      @y_axis = y_axis
     end
 
     def left
@@ -52,6 +51,11 @@ module Robot
 
     def to_s
       "#{x_axis},#{y_axis},#{direction.upcase}"
+    end
+
+    def validate!
+      handle_invalid_direction(direction)
+      handle_invalid_position(x_axis, y_axis)
     end
 
     private

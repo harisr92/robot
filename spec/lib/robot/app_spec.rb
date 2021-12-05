@@ -54,7 +54,7 @@ RSpec.describe Robot::App do
 
       context 'when wrong axis data is given' do
         it 'should ignore the data' do
-          shell_expect.to receive(:say).with("Invalid position 3,3000,SOUTH. \n", :red)
+          shell_expect.to receive(:say).with("Invalid position 3,3000,SOUTH. \nCurrent postion is 3,3000,SOUTH", :red)
           subject.invoke(:place, ['3,3000,SOUTH'])
           expect(Robot::Table.init.toy.to_s).to eq('')
         end

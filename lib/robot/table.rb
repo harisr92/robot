@@ -30,7 +30,9 @@ module Robot
     end
 
     def place_robot(**args)
-      self.toy = Toy.new(**args, table: self)
+      new_toy = Toy.new(**args, table: self)
+      new_toy.validate!
+      self.toy = new_toy
     end
 
     def update

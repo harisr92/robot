@@ -27,26 +27,29 @@ RSpec.describe Robot::Toy do
     context 'when wrong direction is given' do
       it 'should raise invalid error' do
         err_message = "Invalid direction, WRONG. \nAvailable directions are NORTH, SOUTH, WEST and EAST"
+        toy = described_class.new(x_axis: 0, y_axis: 0, direction: 'wrong', table: table)
         expect do
-          described_class.new(x_axis: 0, y_axis: 0, direction: 'wrong', table: table)
+          toy.validate!
         end.to raise_error(Robot::Toy::Invalid, err_message)
       end
     end
 
     context 'when wrong x_axis is given' do
       it 'should raise invalid error' do
-        err_message = "Invalid position #{Robot.config.table_width + 2},0,NORTH. \n"
+        err_message = "Invalid position #{Robot.config.table_width + 2},0,NORTH. \nCurrent postion is 7,0,NORTH"
+        toy = described_class.new(x_axis: Robot.config.table_width + 2)
         expect do
-          described_class.new(x_axis: Robot.config.table_width + 2)
+          toy.validate!
         end.to raise_error(Robot::Toy::Invalid, err_message)
       end
     end
 
     context 'when wrong y_axis is given' do
       it 'should raise invalid error' do
-        err_message = "Invalid position 0,#{Robot.config.table_height + 2},NORTH. \n"
+        err_message = "Invalid position 0,#{Robot.config.table_height + 2},NORTH. \nCurrent postion is 0,7,NORTH"
+        toy = described_class.new(y_axis: Robot.config.table_height + 2)
         expect do
-          described_class.new(y_axis: Robot.config.table_height + 2)
+          toy.validate!
         end.to raise_error(Robot::Toy::Invalid, err_message)
       end
     end
@@ -55,7 +58,8 @@ RSpec.describe Robot::Toy do
       let(:table) { Class.new }
 
       it 'should raise no method error' do
-        expect { described_class.new(table: table) }.to raise_error(NoMethodError)
+        toy = described_class.new(table: table)
+        expect { toy.validate! }.to raise_error(NoMethodError)
       end
     end
   end
