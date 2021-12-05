@@ -17,7 +17,7 @@ module Robot
     attr_accessor :x_axis, :y_axis
 
     def initialize(x_axis: 0, y_axis: 0, direction: 'north', table: nil)
-      raise Invalid, "not a valid direction #{direction.upcase}" unless DIRECTIONS.include?(direction)
+      handle_invalid_direction(direction)
 
       @direction = direction
       @table = table
@@ -56,23 +56,40 @@ module Robot
 
     private
 
-    def validate_and_set(x_axis, y_axis)
-      validate_x_axis(x_axis)
-      validate_y_axis(y_axis)
+    def validate_and_set(new_x, new_y)
+      handle_invalid_position(new_x, new_y)
+
+      self.x_axis = new_x
+      self.y_axis = new_y
     end
 
-    def validate_x_axis(x_axis)
+    def handle_invalid_direction(direction)
+      return if DIRECTIONS.include?(direction)
+
+      message = "Invalid direction, #{direction.upcase}. \n"
+      message << 'Available directions are '
+      directions = DIRECTIONS.map(&:upcase)
+      message << directions[0..-2].join(', ')
+      message << " and #{directions.last}"
+      raise Invalid, message
+    end
+
+    def handle_invalid_position(new_x, new_y)
+      return if valid_x_axis?(new_x) && valid_y_axis?(new_y)
+
+      message = "Invalid position #{new_x},#{new_y},#{direction.upcase}. \n"
+      message << "Current postion is #{self}" if x_axis && y_axis
+      raise Invalid, message
+    end
+
+    def valid_x_axis?(new_x)
       width = table&.width || Robot.config.table_width
-      raise Invalid, "Invalid x-axis #{x_axis}" unless x_axis >= 0 && x_axis <= width
-
-      self.x_axis = x_axis
+      new_x >= 0 && new_x <= width
     end
 
-    def validate_y_axis(y_axis)
+    def valid_y_axis?(new_y)
       height = table&.height || Robot.config.table_height
-      raise Invalid, "Invalid y-axis #{y_axis}" unless y_axis >= 0 && y_axis <= height
-
-      self.y_axis = y_axis
+      new_y >= 0 && new_y <= height
     end
   end
 end

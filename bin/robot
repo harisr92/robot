@@ -16,4 +16,11 @@ unless ARGV.empty? || ARGV[0].to_s.start_with?('-')
                    .tr('-', '_')
                    .downcase
 end
-Robot::App.start
+
+begin
+  Robot::App.start
+rescue StandardError => e
+  shell = Thor::Shell::Color.new
+  shell.say e.message, :red
+  exit(false)
+end

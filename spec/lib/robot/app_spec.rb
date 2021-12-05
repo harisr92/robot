@@ -1,6 +1,14 @@
 require 'spec_helper'
 
 RSpec.describe Robot::App do
+  def shell_expect
+    expect_any_instance_of(Thor::Shell::Basic)
+  end
+
+  before do
+    allow_any_instance_of(Thor::Shell::Basic).to receive(:say)
+  end
+
   it 'should be a thor app' do
     expect(described_class.superclass).to eq(Thor)
   end
@@ -38,6 +46,7 @@ RSpec.describe Robot::App do
     context 'when wrong arguments are passed' do
       context 'when direction is wrong' do
         it 'should have empty report' do
+          shell_expect.to receive(:say).with("Invalid direction, INVALID. \nAvailable directions are NORTH, SOUTH, WEST and EAST", :red)
           subject.invoke(:place, ['3,3,INVALID'])
           expect(Robot::Table.init.toy.to_s).to eq('')
         end
@@ -45,6 +54,7 @@ RSpec.describe Robot::App do
 
       context 'when wrong axis data is given' do
         it 'should ignore the data' do
+          shell_expect.to receive(:say).with("Invalid position 3,3000,SOUTH. \n", :red)
           subject.invoke(:place, ['3,3000,SOUTH'])
           expect(Robot::Table.init.toy.to_s).to eq('')
         end
@@ -52,6 +62,7 @@ RSpec.describe Robot::App do
 
       context 'when less arguments are passed' do
         it 'should ignore data' do
+          shell_expect.to receive(:say).with("Invalid direction, . \nAvailable directions are NORTH, SOUTH, WEST and EAST", :red)
           subject.invoke(:place, ['3,3000'])
           expect(Robot::Table.init.toy.to_s).to eq('')
         end
@@ -60,12 +71,15 @@ RSpec.describe Robot::App do
   end
 
   describe '#report' do
+    let(:table) { Robot::Table.init }
+
     before do
-      allow(Robot::Table).to receive(:report)
+      table.place_robot(x_axis: 1, y_axis: 1, direction: 'north')
+      table.update
     end
 
     it 'should get report from table' do
-      expect(Robot::Table).to receive(:report)
+      expect_any_instance_of(Thor::Shell::Basic).to receive(:say).with(table.toy.to_s, %i[bold white on_black])
       subject.invoke(:report)
     end
   end

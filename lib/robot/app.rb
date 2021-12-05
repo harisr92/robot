@@ -33,8 +33,8 @@ module Robot
       x_axis, y_axis, direction = sanitize_positions(args)
       table.place_robot(x_axis: x_axis, y_axis: y_axis, direction: direction)
       table.update
-    rescue Toy::Invalid
-      nil
+    rescue Toy::Invalid => e
+      shell.say e.message, :red
     end
 
     desc 'left', 'Turn robot 90 degrees to the left'
@@ -59,13 +59,13 @@ module Robot
 
       table.toy.move
       table.update
-    rescue Toy::Invalid
-      nil
+    rescue Toy::Invalid => e
+      shell.say e.message, :red
     end
 
     desc 'report', 'Get position of the robot on the table'
     def report
-      shell.say Table.report
+      shell.say Table.report, %i[bold white on_black]
     end
 
     desc 'reset', 'Removes robot from the table and gives a clean table'
