@@ -15,7 +15,7 @@ require 'robot'
 RSpec.configure do |c|
   c.tty = true
 
-  c.before :each do
+  c.before do
     Robot::Storage.reset
   end
 end

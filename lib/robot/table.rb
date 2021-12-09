@@ -29,12 +29,6 @@ module Robot
       @height = Robot.config.table_height || 5
     end
 
-    def place_robot(**args)
-      new_toy = Toy.new(**args, table: self)
-      new_toy.validate!
-      self.toy = new_toy
-    end
-
     def update
       Storage.store(self)
     end

@@ -1,6 +1,26 @@
+require:
+  - rubocop-rspec
+
 AllCops:
   SuggestExtensions: false
   NewCops: enable
   Exclude:
-    - './spec/**/*'
     - 'vendor/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - 'spec/**/*.rb'
+
+RSpec/IdenticalEqualityAssertion:
+  Enabled: true
+RSpec/Rails/AvoidSetupHook:
+  Enabled: true
+RSpec/MultipleExpectations:
+  Max: 2
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+RSpec/LetSetup:
+  Enabled: false
+RSpec/NestedGroups:
+  Max: 5
