@@ -47,27 +47,27 @@ RSpec.describe Robot::App do
       context 'when valid commands are passed' do
         it 'executes every command' do
           app.invoke(:execute, [], commands: "PLACE 0,0,NORTH\n RIGHT\n REPORT\n MOVE\n LEFT\n LEFT")
-          table = Robot::Table.init
-          expect(table.toy.to_s).to eq('1,0,WEST')
+          game = Robot::Game.init
+          expect(game.to_positions).to eq([1, 0, 'WEST'])
         end
       end
 
       context 'when commands are not valid' do
-        it 'skips rest commands when robot is not place' do
+        it 'skips rest of the commands when robot is not place' do
           app.invoke(:execute, [], commands: "RIGHT\n REPORT\n MOVE\n LEFT\n LEFT")
-          table = Robot::Table.init
-          expect(table.toy.to_s).to eq('')
+          game = Robot::Game.init
+          expect(game.to_positions).to be_nil
         end
 
         it 'skips when two commands are on same line' do
           app.invoke(:execute, [], commands: "PLACE 0,0,NORTH\n RIGHT\n REPORT\n MOVE LEFT\n LEFT")
-          table = Robot::Table.init
+          table = Robot::Game.init
           expect(table.toy.to_s).to eq('1,0,NORTH')
         end
 
         it 'skips when command is invalid' do
           app.invoke(:execute, [], commands: "PLACE 0,0,NORTH\n RIGHT\n REPORT\n MOVE\n LEFT\n LET")
-          table = Robot::Table.init
+          table = Robot::Game.init
           expect(table.toy.to_s).to eq('1,0,NORTH')
         end
       end
@@ -76,20 +76,20 @@ RSpec.describe Robot::App do
     context 'when file is passed' do
       it 'reads commands from file' do
         app.invoke(:execute, [], file: "#{__dir__}/../../templates/commands.txt")
-        table = Robot::Table.init
+        table = Robot::Game.init
         expect(table.toy.to_s).to eq('0,1,WEST')
       end
 
       context 'when path is not valid' do
         it 'does not do anything' do
           app.invoke(:execute, [], file: './commands.txt')
-          table = Robot::Table.init
-          expect(table.toy.to_s).to eq('')
+          game = Robot::Game.init
+          expect(game.to_positions).to be_nil
         end
 
         it 'runs all commands when large file is passed' do
           app.invoke(:execute, [], file: "#{__dir__}/../../templates/large_commands_set.txt")
-          table = Robot::Table.init
+          table = Robot::Game.init
           expect(table.toy.to_s).to eq('5,3,NORTH')
         end
       end
@@ -99,9 +99,9 @@ RSpec.describe Robot::App do
   describe '#reset' do
     it 'resets table' do
       app.invoke(:execute, [], commands: 'PLACE 0,0,NORTH')
-      expect(Robot::Table.report).to eq('0,0,NORTH')
+      expect(Robot::Game.init.to_positions).to eq([0, 0, 'NORTH'])
       app.reset
-      expect(Robot::Table.report).to eq('')
+      expect(Robot::Game.init.to_positions).to be_nil
     end
   end
 end

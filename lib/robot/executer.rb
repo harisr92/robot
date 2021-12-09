@@ -9,9 +9,9 @@ module Robot
       new(cmd).run
     end
 
-    def initialize(cmd, table = Table.init, toy = Toy, stdout = Shell.new)
+    def initialize(cmd, game = Game.init, toy = Toy, stdout = Shell.new)
       @cmd = cmd
-      @table = table
+      @game = game
       @toy = toy
       @stdout = stdout
     end
@@ -20,8 +20,9 @@ module Robot
       parse
       return if @cmd.to_s.strip == ''
 
-      @table.toy = execute_on_toy
-      @table.update
+      execute_on_toy
+      @game.validate!
+      @game.save
     rescue Toy::Invalid => e
       stdout.puts e, :red
     end
@@ -38,22 +39,14 @@ module Robot
       x_axis, y_axis, direction = args.to_s.split(',')
       return [] if x_axis.nil?
 
-      { x_axis: x_axis, y_axis: y_axis, direction: direction.to_s.downcase, table: @table }
+      { x_axis: x_axis, y_axis: y_axis, direction: direction.to_s.downcase }
     end
 
     def execute_on_toy
-      toy = @table.toy
-      return place_toy unless toy.respond_to?(@cmd)
-
-      resp = toy.method(@cmd).call(@args)
-      stdout.puts(resp) if resp
-      toy
-    end
-
-    def place_toy
-      return @table.toy unless @cmd == 'place'
-
-      @toy.place(**@args)
+      @args = @args.to_h
+      @game.method(@cmd).call(**@args)
+    rescue NameError
+      stdout.puts "Game does not know how to do #{@cmd}"
     end
   end
 end

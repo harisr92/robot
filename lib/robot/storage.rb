@@ -4,21 +4,21 @@ module Robot
   # Storage interface to fetch and store data
   class Storage
     class << self
-      def store(table)
+      def store(game)
         storage.transaction do
-          storage[:table] = table
+          storage[:game] = game
         end
       end
 
       def fetch
         storage.transaction do
-          storage[:table] ||= Table.new
+          storage[:game] ||= Game.new
         end
       end
 
       def reset
         storage.transaction do
-          storage.delete(:table)
+          storage.delete(:game)
         end
         fetch
       end
