@@ -198,4 +198,11 @@ RSpec.describe Robot::Toy do
       expect(toy.to_positions).to eq([0, 0, 'NORTH'])
     end
   end
+
+  describe '#place' do
+    it 'sets positions and direction to toy' do
+      toy.place(x_axis: 1, y_axis: 1, direction: 'east')
+      expect(toy.to_positions).to eq([1, 1, 'EAST'])
+    end
+  end
 end

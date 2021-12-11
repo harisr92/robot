@@ -12,8 +12,7 @@ module Robot
       east: { left: 'north', right: 'south' }
     }.freeze
 
-    attr_reader :direction, :table
-    attr_accessor :x_axis, :y_axis
+    attr_accessor :x_axis, :y_axis, :direction
 
     class << self
       def place(**args)

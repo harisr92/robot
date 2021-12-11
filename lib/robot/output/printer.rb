@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# lib/shell.rb
-
 module Robot
   module Output
     # Printer, to print report
@@ -24,6 +22,8 @@ module Robot
 
         shell.puts(data, options[:formats])
       end
+
+      private
 
       def shell
         @shell = options[:shell] || Shell.new

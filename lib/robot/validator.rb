@@ -8,13 +8,23 @@ module Robot
     end
 
     def valid?
-      handle_invalid_direction && handle_invalid_position
+      toy_not_found && handle_invalid_direction &&
+        handle_invalid_position
     end
 
     def validate!
       return true if valid?
 
       raise Toy::Invalid, @message
+    end
+
+    private
+
+    def toy_not_found
+      return true if toy
+
+      @message = 'Toy not places'
+      false
     end
 
     def handle_invalid_direction
