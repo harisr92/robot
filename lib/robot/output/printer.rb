@@ -7,20 +7,21 @@ module Robot
       attr_reader :options
 
       class << self
-        def out(options = {})
-          new(options).print
+        def out(data, options = {})
+          new(data, options).print
         end
       end
 
-      def initialize(options = {})
+      def initialize(data, options = {})
         @options = options
+        @data = data
       end
 
       def print
         text = data
         return if text == '' || text.nil?
 
-        shell.puts(data, options[:formats])
+        shell.puts(text, options[:formats])
       end
 
       private
@@ -30,7 +31,7 @@ module Robot
       end
 
       def data
-        [options[:data]].flatten.compact.join(',')
+        [@data].flatten.compact.join(',')
       end
     end
   end

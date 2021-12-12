@@ -5,15 +5,16 @@ module Robot
   class Executer
     attr_accessor :stdout
 
-    def self.run(cmd)
-      new(cmd).run
+    def self.run(*args)
+      new(*args).run
     end
 
-    def initialize(cmd, game = Game.init, toy = Toy, stdout = Shell.new)
+    def initialize(cmd, game = Game.init, toy = Toy, stdout = nil)
       @cmd = cmd
       @game = game
       @toy = toy
-      @stdout = stdout
+      @stdout = Output.find(stdout.to_s)
+      @game.printer = @stdout
     end
 
     def run
@@ -24,7 +25,7 @@ module Robot
       @game.validate!
       @game.save
     rescue Toy::Invalid => e
-      stdout.puts e, :red
+      stdout.out e, formats: :red
     end
 
     private
@@ -46,7 +47,7 @@ module Robot
       @args = @args.to_h
       @game.method(@cmd).call(**@args)
     rescue NameError
-      stdout.puts "Game does not know how to do #{@cmd}"
+      stdout.out "Game does not know how to do #{@cmd}"
     end
   end
 end

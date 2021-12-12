@@ -8,11 +8,19 @@ module Robot
       commands: Parser::CommandsParser
     }.freeze
 
-    def self.parse(options = {})
-      key = options.keys.first
-      return unless PARSERS.keys.include?(key.to_s.to_sym)
+    class << self
+      def parse(options = {})
+        parser = nil
+        cmd_list = nil
+        options.each do |key, val|
+          parser = PARSERS[key.to_sym]
+          cmd_list = val
+          break if parser
+        end
+        return unless parser
 
-      PARSERS[key.to_sym].parse(options[key])
+        parser.parse(cmd_list, Executer, options[:output])
+      end
     end
   end
 end

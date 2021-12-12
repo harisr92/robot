@@ -19,6 +19,7 @@ module Robot
     method_option :file, aliases: '-f',
                          desc: 'Robot commands are fetched from the supplied file, each command in each line'
     method_option :commands, aliases: '-c', desc: 'Robot commands from command line per line'
+    method_option :output, aliases: '-o', desc: 'output method'
     def execute
       Parser.parse(options)
     end

@@ -5,7 +5,7 @@ module Robot
   class Game
     extend Forwardable
 
-    attr_accessor :table, :toy
+    attr_accessor :table, :toy, :printer
 
     def_delegators :toy, :left, :right
 
@@ -31,7 +31,7 @@ module Robot
     end
 
     def report(*_)
-      @printer.out(data: to_positions, formats: %i[on_white bold black])
+      printer.out(to_positions, formats: %i[on_white bold black])
     end
 
     def move(*_)
